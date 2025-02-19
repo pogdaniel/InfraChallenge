@@ -15,7 +15,7 @@ terraform {
   }
 }
 
-# state Locking Infra
+# state lock
 resource "aws_dynamodb_table" "terraform_lock" {
   name           = "terraform-lock-table-dev"
   billing_mode   = "PAY_PER_REQUEST"
@@ -32,7 +32,7 @@ resource "aws_dynamodb_table" "terraform_lock" {
 }
 
 
-# state Storage Infra
+# state storage
 module "tf_state_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.15.1"

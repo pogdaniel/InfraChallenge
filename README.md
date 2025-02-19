@@ -71,7 +71,7 @@ graph TD
     style C fill:#FF9800,stroke:#EF6C00  
     style D fill:#9C27B0,stroke:#6A1B9A  
     style E fill:#607D8B,stroke:#37474F
-
+```
 
 ## Implementation 2: Serverless Tier
 
@@ -109,7 +109,20 @@ graph TD
     style G fill:#795548
     style H fill:#009688
     style I fill:#673AB7
+```
+## Lambda Optimization
 
+**Connection Handling**:
+```mermaid
+graph TD
+    A[Lambda Start] --> B{Pool Exists?}
+    B -->|No| C[Get Secrets]
+    C --> D[Create Pool]
+    B -->|Yes| E[Get Connection]
+    D --> E
+    E --> F[Execute Query]
+    F --> G[Release Connection]
+```
 
 ## 🚀 Deployment
 

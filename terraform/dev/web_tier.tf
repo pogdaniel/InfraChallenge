@@ -1,4 +1,5 @@
-# Security Group for ALB
+##
+# SG for ALB
 module "alb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
@@ -13,7 +14,7 @@ module "alb_sg" {
   
 }
 
-# Application Load Balancer
+# App Load Balancer
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 8.0"
@@ -47,7 +48,7 @@ module "alb" {
   })
 }
 
-# Security Group for Web Servers
+# SG for Apache Web Servers
 module "web_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
@@ -66,7 +67,7 @@ module "web_sg" {
   egress_rules = ["all-all"]
 }
 
-# EC2 Instances in Private Subnets
+# EC2 in Private Subnets
 module "web_servers" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 4.0"
@@ -113,7 +114,10 @@ module "web_servers" {
   })
 }
 
-# Auto Scaling Group Configuration
+
+##
+# ASG Config
+
 resource "aws_autoscaling_group" "web" {
   name_prefix          = "${local.app_name}-web-asg-"
   min_size             = 2

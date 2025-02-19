@@ -1,7 +1,6 @@
 ## This file is used to define a new serverless 3-tier architecture infrastructure
 #
-##
-# Frontend Infra
+# Frontend Infra (react app)
 
 module "react_hosting" {
   source  = "terraform-aws-modules/cloudfront/aws"
@@ -47,11 +46,14 @@ module "react_bucket" {
   }
 }
 
+## This resource is only an ideea of how to create an OAI/CloudFront distribution
+
 resource "aws_cloudfront_origin_access_identity" "react_oai" {
   comment = "React app OAI"
 }
 
 # Backend Infra
+
 module "api_gateway" {
   source  = "terraform-aws-modules/apigateway-v2/aws"
   version = "2.2.2"
@@ -67,6 +69,22 @@ module "api_gateway" {
   }
 }
 
+resource "aws_iam_policy" "lambda_db_access" {
+  name        = "${local.app_name}-lambda-db-access"
+  description = "RDS access policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = ["rds-db:connect"]
+        Effect   = "Allow"
+        Resource = module.db.cluster_arn
+      }
+    ]
+  })
+}
+
 module "api_lambda" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "6.0.1"
@@ -75,7 +93,6 @@ module "api_lambda" {
   handler       = "index.handler"
   runtime       = "nodejs18.x"
   source_path   = "./lambda/src"
-
   vpc_subnet_ids         = module.vpc.private_subnets
   vpc_security_group_ids = [module.lambda_sg.security_group_id]
 
@@ -83,6 +100,12 @@ module "api_lambda" {
     DB_ENDPOINT = module.db.cluster_endpoint
     DB_NAME     = "${local.app_name}_db"
   }
+
+
+  policies = [
+    aws_iam_policy.lambda_db_access.arn,
+    "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+  ]
 }
 
 module "lambda_sg" {
@@ -119,6 +142,7 @@ resource "aws_cognito_user_pool_domain" "auth_domain" {
   user_pool_id = aws_cognito_user_pool.users.id
 }
 
+## WIP
 # module "serverless_lambda" {
 #   source  = "git::https://github.com/terraform-aws-modules/terraform-aws-lambda.git"
 #   # or registry reference if available

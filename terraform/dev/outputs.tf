@@ -1,3 +1,5 @@
+##
+# implementation 1 output for apache web servers
 output "alb_dns_name" {
   value = module.alb.lb_dns_name
 }
@@ -11,7 +13,8 @@ output "web_instance_ids" {
   value       = values(module.web_servers)[*].id
 }
 
-# adding severless outputs
+## implementation 2 for Lambda severless outputs
+# 
 output "api_lambda_arn" {
   value = module.api_lambda.lambda_function_arn
 }
