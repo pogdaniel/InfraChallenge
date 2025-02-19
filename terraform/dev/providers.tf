@@ -1,7 +1,7 @@
 provider "aws" {
     region = "eu-west-3"
     assume_role {
-        role_arn = "arn:aws:iam::677276104161:role/DevOpsAdminRole"
+        role_arn = "arn:aws:iam::777277777771:role/DevOpsAdminRole"
     }
     default_tags {
       tags = local.tags
