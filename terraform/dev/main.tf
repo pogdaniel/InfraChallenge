@@ -1,4 +1,6 @@
-# RDS PostgreSQL with Secrets Manager
+##
+# Prequisites
+
 resource "random_password" "db" {
   length  = 64
   special = false
@@ -10,6 +12,17 @@ resource "aws_secretsmanager_secret" "db" {
     Tier = "ImproveSecurity"
   })  
 }
+
+resource "aws_secretsmanager_secret_version" "db" {
+  secret_id     = aws_secretsmanager_secret.db.id
+  secret_string = jsonencode({
+    username = var.db_username,
+    password = random_password.db.result
+  })
+}
+
+
+# RDS PostgreSQL with SSM/Secrets Manager
 
 module "db" {
   source  = "terraform-aws-modules/rds-aurora/aws"
